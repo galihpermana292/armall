@@ -11,6 +11,8 @@ import Login from './pages/login';
 import Signup from './pages/signup';
 import { useState } from 'react';
 import { AuthContext } from './utils/auth';
+import DetailDosen from './pages/detailDosen';
+import { PrivateRoute, RestrictedRoute } from './utils/privateRoute';
 function App() {
 	const isAnyToken = JSON.parse(localStorage.getItem('token'));
 	const userId = JSON.parse(localStorage.getItem('id'));
@@ -31,8 +33,33 @@ function App() {
 				{pages.map(({ route, Component, name }) => (
 					<Route exact path={route} element={<Component />} key={name} />
 				))}
-				<Route exact path={'/login'} element={<Login />} />
-				<Route exact path={'/signup'} element={<Signup />} />
+				<Route
+					exact
+					path={'/login'}
+					element={
+						<RestrictedRoute>
+							<Login />
+						</RestrictedRoute>
+					}
+				/>
+				<Route
+					exact
+					path={'/signup'}
+					element={
+						<RestrictedRoute>
+							<Signup />
+						</RestrictedRoute>
+					}
+				/>
+				<Route
+					exact
+					path={'/dosen/:id'}
+					element={
+						<PrivateRoute>
+							<DetailDosen />
+						</PrivateRoute>
+					}
+				/>
 				{/* <Route exact path="/" element={<Landing />} />
 				<Route path="/" element={<Landing />} /> */}
 			</Routes>

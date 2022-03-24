@@ -67,7 +67,9 @@ const Navbar = () => {
 								mr: 2,
 								display: { xs: 'none', md: 'flex' },
 							}}>
-							<img src={logo} alt="logo" width={'130'} />
+							<Link to="/">
+								<img src={logo} alt="logo" width={150} />
+							</Link>
 						</Typography>
 
 						<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -111,7 +113,9 @@ const Navbar = () => {
 							noWrap
 							component="div"
 							sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-							<img src={logo} alt="logo" width={'130'} />
+							<Link to="/">
+								<img src={logo} alt="logo" width={150} />
+							</Link>
 						</Typography>
 						<Box
 							sx={{

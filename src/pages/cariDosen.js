@@ -8,14 +8,24 @@ import Select from '@mui/material/Select';
 import DosenCard from '../components/dosenCard';
 import { PrimaryButton } from '../components/navbar';
 import { konsulAPI } from '../utils/api';
+import { Link } from 'react-router-dom';
 
 const CariDosen = () => {
 	const [location, setLocation] = useState('');
 	const [allDosen, setAllDosen] = useState([]);
-
+	const [error, setError] = useState({ status: false, message: null });
 	const fetchDosen = async () => {
-		const data = await konsulAPI.get('/api/dosen');
-		setAllDosen(data.data.data);
+		try {
+			setError((error) => ({ status: false, message: null }));
+			const data = await konsulAPI.get('/api/dosen');
+			setAllDosen(data.data.data);
+		} catch (err) {
+			setError((error) => ({
+				status: true,
+				message: 'Error while fetching data...',
+			}));
+			console.log(err);
+		}
 	};
 
 	const handleChange = (event) => {
@@ -79,14 +89,17 @@ const CariDosen = () => {
 							Search
 						</button>
 					</div>
-					<div className="space-y-5">
-						{allDosen.length === 0 && 'Fetching data...'}
+					<div className="space-y-5 mb-20">
+						{allDosen.length === 0 && !error.status && 'Fetching data...'}
 						{allDosen.length > 0 &&
 							allDosen.map((data, idx) => (
 								<div key={idx}>
-									<DosenCard data={data} />
+									<Link to={`/dosen/${data._id}`}>
+										<DosenCard data={data} />
+									</Link>
 								</div>
 							))}
+						{error.status && error.message}
 						{/* <h1 className="text-center">Data tidak ada</h1> */}
 					</div>
 				</div>

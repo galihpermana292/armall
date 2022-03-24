@@ -1,12 +1,16 @@
 import React from 'react';
 import { Container } from '@mui/material';
+import logo from '../images/logo.png';
+import { Link } from 'react-router-dom';
 const Footer = () => {
 	return (
 		<div className="pt-10 mt-10">
 			<Container maxWidth="xl">
 				<div className="flex flex-col space-y-12 md:space-y-0 md:flex-row md:justify-around">
 					<div>
-						<h1 className="font-bold text-xl md:text-2xl">Logo</h1>
+						<Link to="/">
+							<img src={logo} alt="logo" width={150} />
+						</Link>
 					</div>
 					<div className="space-y-2">
 						<h1 className="font-bold text-xl md:text-2xl">Menu</h1>

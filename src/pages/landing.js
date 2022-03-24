@@ -5,6 +5,7 @@ import Cards from '../components/card';
 import hero from '../images/hero.png';
 import hero2 from '../images/hero2.png';
 import { TESTIMONI, WHY_US } from '../utils/constant';
+import { Link } from 'react-router-dom';
 
 const Landing = () => {
 	return (
@@ -23,7 +24,11 @@ const Landing = () => {
 							yang berpengalaman di bidangnya untuk berkonsultasi masalah
 							skripsi atau tugas akhir kamu yang tak kunjung selesai.
 						</p>
-						<PrimaryButton>Cari Dosen Sekarang</PrimaryButton>
+						<div>
+							<Link to="/cari-dosen">
+								<PrimaryButton>Cari Dosen Sekarang</PrimaryButton>
+							</Link>
+						</div>
 					</div>
 					<div className="max-w-4xl">
 						<img src={hero} alt="hero" />
@@ -91,7 +96,11 @@ const Landing = () => {
 							gelarmu. Jadi tunggu apa lagi? Ayo daftar sekarang dan mulai cari
 							dosen yang sesuai dengan keinginanmu!
 						</p>
-						<PrimaryButton>Cari Dosen Sekarang</PrimaryButton>
+						<div>
+							<Link to="/cari-dosen">
+								<PrimaryButton>Cari Dosen Sekarang</PrimaryButton>
+							</Link>
+						</div>
 					</div>
 					<div className="max-w-4xl -ml-32">
 						<img src={hero2} alt="hero" />

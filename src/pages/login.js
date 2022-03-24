@@ -1,8 +1,8 @@
 import { Container } from '@mui/material';
 import React, { useState } from 'react';
 import { PrimaryButton } from '../components/navbar';
-import dosen from '../images/dosen.png';
-import mahasiswa from '../images/mahasiswa.png';
+import dosenImg from '../images/dosen.png';
+import mahasiswaImg from '../images/mahasiswa.png';
 import TextField from '@mui/material/TextField';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/auth';
@@ -13,6 +13,7 @@ const Login = () => {
 	const navigate = useNavigate();
 	const [login, setLogin] = useState({ mahasiswa: true, dosen: false });
 	const [mahasiswa, setMahasiswa] = useState({ email: null, password: null });
+	const [error, setError] = useState({ status: false, message: null });
 
 	const handleLogin = async (user, e) => {
 		if (user === 'dosen' && login.mahasiswa)
@@ -21,10 +22,10 @@ const Login = () => {
 			setLogin((login) => ({ dosen: false, mahasiswa: true }));
 
 		if (user === 'mahasiswa' && login.mahasiswa) {
-			console.log(mahasiswa);
 			//login mahasiswa
 			e.preventDefault();
 			try {
+				setError((error) => ({ status: false, message: null }));
 				const loginResponse = await konsulAPI.post('/api/auth/login', {
 					...mahasiswa,
 				});
@@ -42,8 +43,19 @@ const Login = () => {
 					console.log(loginResponse, token, 'tokenton');
 				}
 			} catch (error) {
+				if (error.message !== 'Network Error') {
+					setError((error) => ({
+						status: true,
+						message: 'Invalid Email or Password',
+					}));
+				} else {
+					setError((error) => ({
+						status: true,
+						message: 'Network Error!',
+					}));
+				}
 				// dispatch({ type: 'SETERROR' });
-				console.log(error, 'in login');
+				console.dir(error, 'in login');
 			}
 		}
 		if (user === 'dosen' && login.dosen) {
@@ -56,7 +68,7 @@ const Login = () => {
 			<Container>
 				<div className="flex flex-col justify-center items-center md:flex-row space-y-10 md:space-y-0 md:space-x-10 md:h-screen min-h-screen ">
 					<div className="flex flex-col items-center justify-center space-y-5 p-5 shadow-md w-full  flex-1 min-h-full">
-						{!login.mahasiswa && <img src={mahasiswa} alt="mahasiswa" />}
+						{!login.mahasiswa && <img src={mahasiswaImg} alt="mahasiswa" />}
 						{login.mahasiswa && (
 							<form
 								className="w-full space-y-10"
@@ -95,6 +107,11 @@ const Login = () => {
 									required
 									sx={{ width: '100%' }}
 								/>
+								{error.status && (
+									<p className="text-center text-red-500 font-semibold">
+										{error.message}
+									</p>
+								)}
 							</form>
 						)}
 						<PrimaryButton
@@ -105,7 +122,7 @@ const Login = () => {
 					</div>
 					<p>atau</p>
 					<div className="flex flex-col items-center justify-center space-y-5 p-5 shadow-md w-full  flex-1 min-h-full">
-						{!login.dosen && <img src={dosen} alt="dosen" />}
+						{!login.dosen && <img src={dosenImg} alt="dosen" />}
 						{login.dosen && (
 							<form className="w-full space-y-10">
 								<div>

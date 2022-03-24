@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from './Auth';
+import { useAuth } from './auth';
 
 export const PrivateRoute = ({ children }) => {
 	const { authToken } = useAuth();

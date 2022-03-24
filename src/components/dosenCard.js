@@ -22,7 +22,7 @@ const DosenCard = ({ data }) => {
 					<div className="space-y-1">
 						<h1 className="font-semibold text-xl">{namaLengkap}</h1>
 						<p>{universitas}</p>
-						<p>{fakultas}</p>
+						<p>Fakultas {fakultas}</p>
 						<p>{lokasi}</p>
 						<div className="rounded-lg p-2 bg-tosca-secondary text-gray-600">
 							<p>
@@ -41,7 +41,7 @@ const DosenCard = ({ data }) => {
 						<h1 className="font-semibold text-xl text-orange-primary">
 							Rp {tarif}/jam
 						</h1>
-						<PrimaryButton full={"true"}>KONSULTASI</PrimaryButton>
+						<PrimaryButton full={'true'}>KONSULTASI</PrimaryButton>
 					</div>
 				</div>
 				<CardMedia
