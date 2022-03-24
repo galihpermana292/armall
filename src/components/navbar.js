@@ -12,19 +12,26 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styled from 'styled-components';
+import { Link, useLocation } from 'react-router-dom';
+import { pages } from '../utils/constant';
+import logo from '../images/logo.png';
+import { useAuth } from '../utils/auth';
 
 export const PrimaryButton = styled(Button).attrs(() => ({}))`
 	color: white;
+	display: inline-block;
+	width: ${(props) => (props.full ? '100%' : 'inherit')};
 	background-color: #ff9f1c;
 	&:hover {
 		background-color: #ff9f1c;
 	}
 `;
 
-const pages = ['Beranda', 'Cari Dosen', 'Bantuan'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Logout'];
 
 const Navbar = () => {
+	const { setAndGetTokens, authToken } = useAuth();
+	const { pathname } = useLocation();
 	const login = false;
 	const [anchorElNav, setAnchorElNav] = useState(null);
 	const [anchorElUser, setAnchorElUser] = useState(null);
@@ -40,8 +47,12 @@ const Navbar = () => {
 		setAnchorElNav(null);
 	};
 
-	const handleCloseUserMenu = () => {
+	const handleCloseUserMenu = (setting) => {
 		setAnchorElUser(null);
+		if (setting === 'Logout') {
+			setAndGetTokens();
+			localStorage.clear();
+		}
 	};
 	return (
 		<>
@@ -56,7 +67,7 @@ const Navbar = () => {
 								mr: 2,
 								display: { xs: 'none', md: 'flex' },
 							}}>
-							LOGO
+							<img src={logo} alt="logo" width={'130'} />
 						</Typography>
 
 						<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -87,9 +98,11 @@ const Navbar = () => {
 									display: { xs: 'block', md: 'none' },
 								}}>
 								{pages.map((page) => (
-									<MenuItem key={page} onClick={handleCloseNavMenu}>
-										<Typography textAlign="center">{page}</Typography>
-									</MenuItem>
+									<Link to={`${page.route}`} key={page.route}>
+										<MenuItem key={page} onClick={handleCloseNavMenu}>
+											<Typography textAlign="center">{page.name}</Typography>
+										</MenuItem>
+									</Link>
 								))}
 							</Menu>
 						</Box>
@@ -98,7 +111,7 @@ const Navbar = () => {
 							noWrap
 							component="div"
 							sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-							LOGO
+							<img src={logo} alt="logo" width={'130'} />
 						</Typography>
 						<Box
 							sx={{
@@ -107,22 +120,24 @@ const Navbar = () => {
 								justifyContent: 'center',
 							}}>
 							{pages.map((page) => (
-								<Button
-									key={page}
-									onClick={handleCloseNavMenu}
-									sx={{
-										my: 2,
-										color: '#000',
-										display: 'block',
-										mx: 5,
-										textTransform: 'capitalize',
-									}}>
-									{page}
-								</Button>
+								<Link to={`${page.route}`} key={page.route}>
+									<Button
+										key={page}
+										onClick={handleCloseNavMenu}
+										sx={{
+											my: 2,
+											color: '#000',
+											display: 'block',
+											mx: 5,
+											textTransform: 'capitalize',
+										}}>
+										{page.name}
+									</Button>
+								</Link>
 							))}
 						</Box>
 
-						{login ? (
+						{authToken ? (
 							<Box sx={{ flexGrow: 0 }}>
 								<Tooltip title="Open settings">
 									<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -148,16 +163,22 @@ const Navbar = () => {
 									open={Boolean(anchorElUser)}
 									onClose={handleCloseUserMenu}>
 									{settings.map((setting) => (
-										<MenuItem key={setting} onClick={handleCloseUserMenu}>
+										<MenuItem
+											key={setting}
+											onClick={() => handleCloseUserMenu(setting)}>
 											<Typography textAlign="center">{setting}</Typography>
 										</MenuItem>
 									))}
 								</Menu>
 							</Box>
 						) : (
-							<Box>
-								<PrimaryButton variant="primary">Masuk</PrimaryButton>
-							</Box>
+							<Link
+								to="/login"
+								className={pathname === '/login' ? 'hidden' : ''}>
+								<Box>
+									<PrimaryButton variant="primary">Masuk</PrimaryButton>
+								</Box>
+							</Link>
 						)}
 					</Toolbar>
 				</Container>

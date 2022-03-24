@@ -3,6 +3,7 @@ import { PrimaryButton } from '../components/navbar';
 import { Container } from '@mui/material';
 import Cards from '../components/card';
 import hero from '../images/hero.png';
+import hero2 from '../images/hero2.png';
 import { TESTIMONI, WHY_US } from '../utils/constant';
 
 const Landing = () => {
@@ -11,7 +12,7 @@ const Landing = () => {
 			<Container maxWidth="xl">
 				{/* Section 1 */}
 				<div className="min-h-screen flex flex-col-reverse justify-center md:flex-row md:justify-between md:items-center">
-					<div className="max-w-3xl space-y-10 mt-10">
+					<div className="md:max-w-3xl space-y-10 mt-10">
 						<h1 className=" font-bold text-4xl md:text-7xl">
 							Cara termudah menemukan
 							<span className="text-tosca-primary"> dosen pembimbing</span>
@@ -31,7 +32,7 @@ const Landing = () => {
 			</Container>
 
 			{/* Section 2 */}
-			<div className="my-10 bg-section2-pattern bg-cover bg-no-repeat bg-center py-14">
+			<div className="my-12 bg-section2-pattern bg-cover bg-no-repeat bg-center py-16">
 				<Container maxWidth="xl">
 					<div>
 						<h1 className="text-2xl my-6 font-semibold">
@@ -75,6 +76,28 @@ const Landing = () => {
 					</div>
 				</Container>
 			</div>
+
+			<Container maxWidth="xl">
+				{/* Section 5 */}
+				<div className="min-h-screen flex flex-col-reverse justify-center md:flex-row-reverse md:justify-between md:items-center">
+					<div className="md:max-w-4xl space-y-10 mt-10">
+						<h1 className=" font-bold text-4xl md:text-7xl">
+							<span className="text-tosca-primary">Selesaikan </span>
+							tugas akhir atau skripsi kamu
+							<span className="text-tosca-primary"> sekarang!</span>
+						</h1>
+						<p className="md:text-xl">
+							Tidak ada kata terlambat untuk menyelesaikan skripsi dan meraih
+							gelarmu. Jadi tunggu apa lagi? Ayo daftar sekarang dan mulai cari
+							dosen yang sesuai dengan keinginanmu!
+						</p>
+						<PrimaryButton>Cari Dosen Sekarang</PrimaryButton>
+					</div>
+					<div className="max-w-4xl -ml-32">
+						<img src={hero2} alt="hero" />
+					</div>
+				</div>
+			</Container>
 		</>
 	);
 };

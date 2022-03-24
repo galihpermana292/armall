@@ -4,6 +4,8 @@ import wallet from '../images/wallet.png';
 import interaksi from '../images/interaksi.png';
 import testi from '../images/testi.png';
 import quote from '../images/quote.png';
+import Landing from '../pages/landing';
+import CariDosen from '../pages/cariDosen';
 export const WHY_US = [
 	{
 		image: akses,
@@ -52,5 +54,22 @@ export const TESTIMONI = [
 		univ: 'Sistem Informasi - Universitas Brawijaya',
 		text: 'Dosennya asik dan seru, saya jadi bisa menemukan solusi untuk skripsinya',
 	},
+];
 
+export const pages = [
+	{
+		name: 'Beranda',
+		route: '/',
+		Component: () => <Landing />,
+	},
+	{
+		name: 'Cari Dosen',
+		route: '/cari-dosen',
+		Component: () => <CariDosen />,
+	},
+	{
+		name: 'Bantuan',
+		route: '/bantuan',
+		Component: () => <CariDosen />,
+	},
 ];

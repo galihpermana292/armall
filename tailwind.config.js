@@ -4,6 +4,10 @@ module.exports = {
 		extend: {
 			backgroundImage: {
 				'section2-pattern': "url('/src/images/section2.svg')",
+				'cari-dosen-pattern': "url('/src/images/herocari.png')",
+			},
+			minHeight: {
+				'sm-screen': '70vh',
 			},
 			colors: {
 				orange: {
@@ -17,8 +21,11 @@ module.exports = {
 				},
 				tosca: {
 					primary: '#2EC4B6',
-					secondary: '#92E6DE',
+					secondary: '#E4F9F7',
 				},
+			},
+			width: {
+				search: '500px',
 			},
 		},
 	},

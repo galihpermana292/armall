@@ -1,10 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import quote from '../images/quote.png';
 const Cards = ({
 	image = '',
@@ -13,7 +10,6 @@ const Cards = ({
 	type = 'normal',
 	data,
 }) => {
-	console.log(data);
 	return (
 		<Card
 			sx={{
