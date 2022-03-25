@@ -14,6 +14,7 @@ const Login = () => {
 	const [login, setLogin] = useState({ mahasiswa: true, dosen: false });
 	const [mahasiswa, setMahasiswa] = useState({ email: null, password: null });
 	const [error, setError] = useState({ status: false, message: null });
+	const [loading, setLoading] = useState(false);
 
 	const handleLogin = async (user, e) => {
 		if (user === 'dosen' && login.mahasiswa)
@@ -25,24 +26,22 @@ const Login = () => {
 			//login mahasiswa
 			e.preventDefault();
 			try {
+				setLoading(true);
 				setError((error) => ({ status: false, message: null }));
 				const loginResponse = await konsulAPI.post('/api/auth/login', {
 					...mahasiswa,
 				});
-				console.log(loginResponse);
 				//jika sukses
 				if (loginResponse.data.success) {
 					const token = loginResponse.data.data.accessToken;
-
-					// const currUser = await konsulAPI.get('/user', {
-					// 	headers: { Authorization: `Bearer ${token}` },
-					// });
 					const id = loginResponse.data.data.id;
 					setAndGetTokens(token, id);
 					navigate('/', { replace: true });
-					console.log(loginResponse, token, 'tokenton');
+					setLoading(false);
+					// console.log(loginResponse, token, 'tokenton');
 				}
 			} catch (error) {
+				setLoading(false);
 				if (error.message !== 'Network Error') {
 					setError((error) => ({
 						status: true,
@@ -71,6 +70,7 @@ const Login = () => {
 						{!login.mahasiswa && <img src={mahasiswaImg} alt="mahasiswa" />}
 						{login.mahasiswa && (
 							<form
+								autoComplete="false"
 								className="w-full space-y-10"
 								onSubmit={(e) => handleLogin('mahasiswa', e)}>
 								<div>
@@ -80,6 +80,7 @@ const Login = () => {
 									<p className="mt-2">Isi data di bawah ini dengan benar</p>
 								</div>
 								<TextField
+									disabled={loading ? true : false}
 									id="outlined-basic"
 									label="Email"
 									variant="outlined"
@@ -94,6 +95,7 @@ const Login = () => {
 									}
 								/>
 								<TextField
+									disabled={loading ? true : false}
 									id="outlined-basic"
 									label="Password"
 									variant="outlined"
@@ -115,6 +117,7 @@ const Login = () => {
 							</form>
 						)}
 						<PrimaryButton
+							disabled={loading ? true : false}
 							full={true}
 							onClick={(e) => handleLogin('mahasiswa', e)}>
 							Login Sebagai Mahasiswa

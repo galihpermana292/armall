@@ -9,6 +9,7 @@ import DosenCard from '../components/dosenCard';
 import { PrimaryButton } from '../components/navbar';
 import { konsulAPI } from '../utils/api';
 import { Link } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const CariDosen = () => {
 	const [location, setLocation] = useState('');
@@ -90,7 +91,7 @@ const CariDosen = () => {
 						</button>
 					</div>
 					<div className="space-y-5 mb-20">
-						{allDosen.length === 0 && !error.status && 'Fetching data...'}
+						{allDosen.length === 0 && !error.status && <CircularProgress />}
 						{allDosen.length > 0 &&
 							allDosen.map((data, idx) => (
 								<div key={idx}>
