@@ -18,12 +18,13 @@ import logo from '../images/logo.png';
 import { useAuth } from '../utils/auth';
 
 export const PrimaryButton = styled(Button).attrs(() => ({}))`
-	color: white;
+	color: ${(props) => (props.secondary ? '#ff9f1c' : '#fff')};
 	display: inline-block;
 	width: ${(props) => (props.full ? '100%' : 'inherit')};
-	background-color: #ff9f1c;
+	background-color: ${(props) => (props.secondary ? 'transparent' : '#ff9f1c')};
+	border: ${(props) => (props.secondary ? '1px solid #ff9f1c' : 'none')};
 	&:hover {
-		background-color: #ff9f1c;
+		background-color: ${(props) => (props.secondary ? '#fff' : '#ff9f1c')};
 	}
 `;
 

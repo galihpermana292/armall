@@ -1,20 +1,11 @@
 import React from 'react';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
 import dosenPicture from '../images/dosenpicture.png';
 import { PrimaryButton } from '../components/navbar';
 const DosenCard = ({ data }) => {
 	const { namaLengkap, universitas, fakultas, lokasi, totalKonsultasi, tarif } =
 		data;
-	// const theme = useTheme();
 	return (
 		<Card sx={{ padding: '2rem' }}>
 			<div className="flex flex-col-reverse md:flex-row-reverse md:items-center md:space-y-0">
@@ -48,7 +39,7 @@ const DosenCard = ({ data }) => {
 					component="img"
 					sx={{ width: 100, height: 100, marginRight: '1rem' }}
 					image={dosenPicture}
-					alt="Live from space album cover"
+					alt="profile"
 				/>
 			</div>
 		</Card>

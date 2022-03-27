@@ -5,9 +5,11 @@ module.exports = {
 			backgroundImage: {
 				'section2-pattern': "url('/src/images/section2.svg')",
 				'cari-dosen-pattern': "url('/src/images/herocari.png')",
+				'profile-bg-pattern': "url('/src/images/profile-bg.png')",
 			},
 			minHeight: {
 				'sm-screen': '70vh',
+				'profile-bg': '20vh',
 			},
 			colors: {
 				orange: {
