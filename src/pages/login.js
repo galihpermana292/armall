@@ -114,14 +114,25 @@ const Login = () => {
 										{error.message}
 									</p>
 								)}
+
+								<PrimaryButton
+									disabled={loading ? true : false}
+									type="submit"
+									full={true}
+									onClick={(e) => handleLogin('mahasiswa', e)}>
+									Login Sebagai Mahasiswa
+								</PrimaryButton>
 							</form>
 						)}
-						<PrimaryButton
-							disabled={loading ? true : false}
-							full={true}
-							onClick={(e) => handleLogin('mahasiswa', e)}>
-							Login Sebagai Mahasiswa
-						</PrimaryButton>
+						{!login.mahasiswa && (
+							<PrimaryButton
+								disabled={loading ? true : false}
+								type="submit"
+								full={true}
+								onClick={(e) => handleLogin('mahasiswa', e)}>
+								Login Sebagai Mahasiswa
+							</PrimaryButton>
+						)}
 					</div>
 					<p>atau</p>
 					<div className="flex flex-col items-center justify-center space-y-5 p-5 shadow-md w-full  flex-1 min-h-full">
@@ -129,24 +140,26 @@ const Login = () => {
 						{login.dosen && (
 							<form className="w-full space-y-10">
 								<div>
-									<h1 className="font-bold text-3xl">Masuk Sebagai Dosen</h1>
-									<p className="mt-2">Isi data di bawah ini dengan benar</p>
+									<h1 className="font-bold text-3xl">Yah!</h1>
+									<p className="mt-2">Fitur ini belum tersedia sekarang</p>
 								</div>
 								<TextField
 									id="outlined-basic"
 									label="Email"
 									variant="outlined"
 									type={'email'}
+									disabled
 									required
-									sx={{ width: '100%' }}
+									sx={{ width: '100%', cursor: 'not-allowed' }}
 								/>
 								<TextField
 									id="outlined-basic"
 									label="Password"
+									disabled
 									variant="outlined"
 									type={'password'}
 									required
-									sx={{ width: '100%' }}
+									sx={{ width: '100%', cursor: 'not-allowed' }}
 								/>
 							</form>
 						)}

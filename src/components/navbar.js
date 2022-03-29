@@ -177,11 +177,11 @@ const Navbar = () => {
 								</Menu>
 							</Box>
 						) : (
-							<Link
-								to="/login"
-								className={pathname === '/login' ? 'hidden' : ''}>
+							<Link to={`/${pathname === '/login' ? 'signup' : 'login'}`}>
 								<Box>
-									<PrimaryButton variant="primary">Masuk</PrimaryButton>
+									<PrimaryButton variant="primary">
+										{pathname === '/login' ? 'signup' : 'login'}
+									</PrimaryButton>
 								</Box>
 							</Link>
 						)}

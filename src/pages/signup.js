@@ -2,7 +2,7 @@ import { Container } from '@mui/material';
 import React, { useState } from 'react';
 import { PrimaryButton } from '../components/navbar';
 import dosen from '../images/dosen.png';
-import mahasiswa from '../images/mahasiswa.png';
+import mahasiswaImg from '../images/mahasiswa.png';
 import TextField from '@mui/material/TextField';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/auth';
@@ -98,7 +98,7 @@ const Signup = () => {
 			<Container>
 				<div className="flex flex-col justify-center items-center md:flex-row space-y-10 md:space-y-0 md:space-x-10 md:h-screen min-h-screen ">
 					<div className="flex flex-col items-center justify-center space-y-5 p-5 shadow-md w-full  flex-1 min-h-full">
-						{!signup.mahasiswa && <img src={mahasiswa} alt="mahasiswa" />}
+						{!signup.mahasiswa && <img src={mahasiswaImg} alt="mahasiswa" />}
 						{signup.mahasiswa && (
 							<form
 								className="w-full space-y-10"
@@ -188,14 +188,24 @@ const Signup = () => {
 										{fieldError.general.message}
 									</p>
 								)}
+
+								<PrimaryButton
+									disabled={loading ? true : false}
+									full={true}
+									type="submit"
+									onClick={(e) => handleSignup('mahasiswa', e)}>
+									signup Sebagai Mahasiswa
+								</PrimaryButton>
 							</form>
 						)}
-						<PrimaryButton
-							disabled={loading ? true : false}
-							full={true}
-							onClick={(e) => handleSignup('mahasiswa', e)}>
-							signup Sebagai Mahasiswa
-						</PrimaryButton>
+						{!signup.mahasiswa && (
+							<PrimaryButton
+								disabled={loading ? true : false}
+								full={true}
+								onClick={(e) => handleSignup('mahasiswa', e)}>
+								signup Sebagai Mahasiswa
+							</PrimaryButton>
+						)}
 					</div>
 					<p>atau</p>
 					<div className="flex flex-col items-center justify-center space-y-5 p-5 shadow-md w-full  flex-1 min-h-full">
@@ -204,8 +214,24 @@ const Signup = () => {
 							<form className="w-full space-y-10">
 								<div>
 									<h1 className="font-bold text-3xl">Yah!</h1>
-									<p className="mt-2">Fitur ini belum tersedia sekarang...</p>
+									<p className="mt-2">Fitur ini belum tersedia sekarang</p>
 								</div>
+								<TextField
+									disabled
+									id="outlined-basic"
+									label="Nama Lengkap"
+									variant="outlined"
+									type={'text'}
+									sx={{ width: '100%' }}
+								/>
+								<TextField
+									disabled
+									id="outlined-basic"
+									label="Nomor Telepon"
+									variant="outlined"
+									type={'number'}
+									sx={{ width: '100%' }}
+								/>
 							</form>
 						)}
 						<PrimaryButton onClick={() => handleSignup('dosen')}>

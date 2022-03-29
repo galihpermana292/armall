@@ -6,6 +6,7 @@ import hero from '../images/hero.png';
 import hero2 from '../images/hero2.png';
 import { TESTIMONI, WHY_US } from '../utils/constant';
 import { Link } from 'react-router-dom';
+import dot from '../images/dot.png';
 
 const Landing = () => {
 	return (
@@ -37,8 +38,9 @@ const Landing = () => {
 			</Container>
 
 			{/* Section 2 */}
-			<div className="my-12 bg-section2-pattern bg-cover bg-no-repeat bg-center py-16">
-				<Container maxWidth="xl">
+			<div className="my-12 bg-section2-pattern bg-cover bg-no-repeat bg-center py-16 relative">
+				<img src={dot} alt="dot" className="absolute top-24 right-0 md:right-40" />
+				<Container maxWidth="xl" sx={{ position: 'relative', zIndex: 2 }}>
 					<div>
 						<h1 className="text-2xl my-6 font-semibold">
 							Mengapa harus{' '}
@@ -58,6 +60,7 @@ const Landing = () => {
 						))}
 					</div>
 				</Container>
+				<img src={dot} alt="dot" className="absolute bottom-0 left-0" />
 			</div>
 
 			{/* Section 3 */}

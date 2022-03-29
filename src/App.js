@@ -1,9 +1,5 @@
 import GlobalStyles from './theme/globalStyles';
-import theme from './theme';
 import Navbar from './components/navbar';
-import { ThemeProvider } from '@mui/material';
-import Buttons from './components/button';
-import Landing from './pages/landing';
 import Footer from './components/footer';
 import { Routes, Route } from 'react-router-dom';
 import { pages } from './utils/constant';
@@ -13,6 +9,9 @@ import { useState } from 'react';
 import { AuthContext } from './utils/auth';
 import DetailDosen from './pages/detailDosen';
 import { PrivateRoute, RestrictedRoute } from './utils/privateRoute';
+import ScrollToTop from './components/scrollToTop';
+
+
 function App() {
 	const isAnyToken = JSON.parse(localStorage.getItem('token'));
 	const userId = JSON.parse(localStorage.getItem('id'));
@@ -27,6 +26,7 @@ function App() {
 	};
 	return (
 		<AuthContext.Provider value={{ authToken, setAndGetTokens, user }}>
+			<ScrollToTop />
 			<GlobalStyles />
 			<Navbar />
 			<Routes>
@@ -60,8 +60,6 @@ function App() {
 						</PrivateRoute>
 					}
 				/>
-				{/* <Route exact path="/" element={<Landing />} />
-				<Route path="/" element={<Landing />} /> */}
 			</Routes>
 			<Footer />
 		</AuthContext.Provider>

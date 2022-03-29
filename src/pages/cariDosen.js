@@ -6,16 +6,26 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DosenCard from '../components/dosenCard';
-import { PrimaryButton } from '../components/navbar';
 import { konsulAPI } from '../utils/api';
 import { Link } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
+import axios from 'axios';
 
 const CariDosen = () => {
 	const [location, setLocation] = useState('');
 	const [allDosen, setAllDosen] = useState([]);
+	const [allProvince, setAllProvince] = useState([]);
 	const [error, setError] = useState({ status: false, message: null });
+
+	const fetchProvince = async () => {
+		const data = await axios.get(
+			'http://www.emsifa.com/api-wilayah-indonesia/api/provinces.json'
+		);
+		setAllProvince(data.data);
+		console.log(data);
+	};
 	const fetchDosen = async () => {
+		fetchProvince();
 		try {
 			setError((error) => ({ status: false, message: null }));
 			const data = await konsulAPI.get('/api/dosen');
@@ -72,9 +82,11 @@ const CariDosen = () => {
 										value={location}
 										label="Cari Lokasi"
 										onChange={handleChange}>
-										<MenuItem value={10}>Ten</MenuItem>
-										<MenuItem value={20}>Twenty</MenuItem>
-										<MenuItem value={30}>Thirty</MenuItem>
+										{allProvince.map((data, idx) => (
+											<MenuItem value={data.name} key={data.id}>
+												{data.name}
+											</MenuItem>
+										))}
 									</Select>
 								</FormControl>
 							</Box>
@@ -91,7 +103,11 @@ const CariDosen = () => {
 						</button>
 					</div>
 					<div className="space-y-5 mb-20">
-						{allDosen.length === 0 && !error.status && <CircularProgress />}
+						{allDosen.length === 0 && !error.status && (
+							<div className="flex justify-center">
+								<CircularProgress />
+							</div>
+						)}
 						{allDosen.length > 0 &&
 							allDosen.map((data, idx) => (
 								<div key={idx}>
@@ -101,7 +117,6 @@ const CariDosen = () => {
 								</div>
 							))}
 						{error.status && error.message}
-						{/* <h1 className="text-center">Data tidak ada</h1> */}
 					</div>
 				</div>
 			</Container>
