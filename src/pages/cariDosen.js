@@ -7,7 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DosenCard from '../components/dosenCard';
 import { konsulAPI } from '../utils/api';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 
@@ -35,7 +35,7 @@ const CariDosen = () => {
 			if (data.data.data.length === 0 && data.data.success) {
 				setError((error) => ({
 					status: true,
-					message: 'Data is not found...',
+					message: 'Data not found...',
 				}));
 			}
 			setAllDosen(data.data.data);
@@ -138,7 +138,11 @@ const CariDosen = () => {
 									</Link>
 								</div>
 							))}
-						{error.status && error.message}
+						{error.status && (
+							<p className="text-2xl font-semibold text-orange-primary">
+								{error.message}
+							</p>
+						)}
 					</div>
 				</div>
 			</Container>
