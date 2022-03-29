@@ -3,9 +3,17 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import dosenPicture from '../images/dosenpicture.png';
 import { PrimaryButton } from '../components/navbar';
+import star from '../images/start.png';
 const DosenCard = ({ data }) => {
-	const { namaLengkap, universitas, fakultas, lokasi, totalKonsultasi, tarif } =
-		data;
+	const {
+		namaLengkap,
+		universitas,
+		fakultas,
+		lokasi,
+		totalKonsultasi,
+		tarif,
+		image,
+	} = data;
 	return (
 		<Card sx={{ padding: '2rem' }}>
 			<div className="flex flex-col-reverse md:flex-row-reverse md:items-center md:space-y-0">
@@ -25,9 +33,12 @@ const DosenCard = ({ data }) => {
 						</div>
 					</div>
 					<div className="space-y-2">
-						<h1 className="font-semibold text-xl text-orange-primary">
-							5.0 (97)
-						</h1>
+						<div className="flex space-x-2">
+							<img src={star} alt="rating" />
+							<h1 className="font-semibold text-xl text-orange-primary">
+								{data.ulasan[0].banyak}
+							</h1>
+						</div>
 						<p>Jasa Konsultasi mulai dari</p>
 						<h1 className="font-semibold text-xl text-orange-primary">
 							Rp {tarif}/jam
@@ -37,8 +48,8 @@ const DosenCard = ({ data }) => {
 				</div>
 				<CardMedia
 					component="img"
-					sx={{ width: 100, height: 100, marginRight: '1rem' }}
-					image={dosenPicture}
+					sx={{ width: 100, height: 100, marginRight: '2rem' }}
+					image={`${process.env.PUBLIC_URL}/images/${data.image}`}
 					alt="profile"
 				/>
 			</div>
