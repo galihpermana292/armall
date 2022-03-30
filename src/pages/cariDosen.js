@@ -31,7 +31,6 @@ const CariDosen = () => {
 			const data = await konsulAPI.get('/api/dosen', {
 				params: { loc: location.toLowerCase(), name: searchKeyword },
 			});
-			console.log(data);
 			if (data.data.data.length === 0 && data.data.success) {
 				setError((error) => ({
 					status: true,
@@ -126,7 +125,7 @@ const CariDosen = () => {
 					{/* </div> */}
 					<div className="space-y-5 mb-20">
 						{allDosen.length === 0 && !error.status && (
-							<div className="flex justify-center">
+							<div className="flex justify-center min-h-sm-screen items-center">
 								<CircularProgress />
 							</div>
 						)}

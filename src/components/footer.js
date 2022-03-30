@@ -8,7 +8,7 @@ import link from '../images/link.png';
 import tt from '../images/tt.png';
 const Footer = () => {
 	return (
-		<div className="pt-10 mt-10">
+		<div className="pt-10 mt-10 bg-cari-dosen-pattern bg-cover bg-bottom">
 			<Container maxWidth="xl">
 				<div className="flex flex-col space-y-12 md:space-y-0 md:flex-row md:justify-around">
 					<div className="space-y-10">

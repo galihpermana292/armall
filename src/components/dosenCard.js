@@ -3,6 +3,8 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import dosenPicture from '../images/dosenpicture.png';
 import { PrimaryButton } from '../components/navbar';
+import fakultasImg from '../images/fakultas.png';
+import locationImg from '../images/location.png';
 import star from '../images/start.png';
 const DosenCard = ({ data }) => {
 	const {
@@ -20,9 +22,21 @@ const DosenCard = ({ data }) => {
 				<div className="flex flex-col md:flex-row md:items-center mt-5 space-y-5 md:space-y-0 md:space-x-5">
 					<div className="space-y-1">
 						<h1 className="font-semibold text-xl">{namaLengkap}</h1>
-						<p>{universitas}</p>
-						<p>Fakultas {fakultas}</p>
-						<p>{lokasi}</p>
+						<div className="flex space-x-2">
+							<div>
+								<img src={fakultasImg} alt={fakultasImg} className="w-[20px]" />
+							</div>
+							<div>
+								<p>{universitas}</p>
+								<p>Fakultas {fakultas}</p>
+							</div>
+						</div>
+						<div className="flex space-x-2 items-center">
+							<div>
+								<img src={locationImg} alt={locationImg} className="w-[20px]" />
+							</div>
+							<p>{lokasi}</p>
+						</div>
 						<div className="rounded-lg p-2 bg-tosca-secondary text-gray-600">
 							<p>
 								<span className="text-tosca-primary">

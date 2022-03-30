@@ -5,7 +5,8 @@ import dosenPicture from '../images/dosenpicture.png';
 import { PrimaryButton } from '../components/navbar';
 import { useParams } from 'react-router-dom';
 import { Container } from '@mui/material';
-import Cards from '../components/card';
+import fakultasImg from '../images/fakultas.png';
+import locationImg from '../images/location.png';
 import testi from '../images/testi.png';
 import { konsulAPI } from '../utils/api';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -69,7 +70,7 @@ const DetailDosen = () => {
 	return (
 		<Container maxWidth={'xl'}>
 			{detailDosen.length === 0 && !error.status && (
-				<div className="flex flex-col md:items-center min-h-sm-screen pt-10 space-y-10">
+				<div className="flex justify-center min-h-sm-screen items-center">
 					<CircularProgress />
 				</div>
 			)}
@@ -81,16 +82,36 @@ const DetailDosen = () => {
 				</div>
 			)}
 			{!error.status && detailDosen.hasOwnProperty('universitas') && (
-				<div className="flex flex-col md:items-center min-h-sm-screen pt-10 space-y-10">
+				<div className="flex flex-col md:items-center min-h-sm-screen pt-10 space-y-10 mb-20">
 					<Card sx={{ width: '100%', maxWidth: '650px' }}>
 						<div className=" min-h-profile-bg bg-profile-bg-pattern bg-center bg-cover"></div>
 						<div className="flex flex-col-reverse md:flex-row-reverse md:items-center md:space-y-0 py-5 px-7 relative">
 							<div className="flex flex-col md:flex-row w-full md:items-center md:space-x-10 mt-5 space-y-5 md:space-y-0">
 								<div className="space-y-1">
 									<h1 className="font-semibold text-xl">{namaLengkap}</h1>
-									<p>{universitas}</p>
-									<p>Fakultas {fakultas}</p>
-									<p>{lokasi}</p>
+									<div className="flex space-x-2">
+										<div>
+											<img
+												src={fakultasImg}
+												alt={fakultasImg}
+												className="w-[20px]"
+											/>
+										</div>
+										<div>
+											<p>{universitas}</p>
+											<p>Fakultas {fakultas}</p>
+										</div>
+									</div>
+									<div className="flex space-x-2 items-center">
+										<div>
+											<img
+												src={locationImg}
+												alt={locationImg}
+												className="w-[20px]"
+											/>
+										</div>
+										<p>{lokasi}</p>
+									</div>
 									<div className="rounded-lg p-2 bg-tosca-secondary text-gray-600">
 										<p>
 											<span className="text-tosca-primary">
@@ -159,11 +180,12 @@ const DetailDosen = () => {
 								{[1, 2, 3].map((idx) => {
 									return (
 										<div className="p-3 border-2 rounded-md" key={idx}>
-											<div className="flex space-x-5 mb-5 w-full "></div>
-											<h1 className="font-bold">Senin</h1>
-											<div className="flex items-center justify-between w-full">
-												<p>Sekitar Universitas Brawijaya</p>
-												<p>09.00 - 12.00</p>
+											<div className="flex flex-col w-full ">
+												<h1 className="font-bold">Senin</h1>
+												<div className="flex items-center justify-between w-full">
+													<p>Sekitar Universitas Brawijaya</p>
+													<p>09.00 - 12.00</p>
+												</div>
 											</div>
 										</div>
 									);
@@ -227,7 +249,7 @@ const DetailDosen = () => {
 						open={open}
 						handleClose={handleClose}
 						status={status}
-						data={{ id, namaLengkap, universitas, fakultas, tarif }}
+						data={{ id, namaLengkap, universitas, fakultas, tarif, image }}
 					/>
 				</div>
 			)}
