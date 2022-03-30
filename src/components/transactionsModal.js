@@ -41,24 +41,32 @@ export default function TransactionModal({
 	const [loading, setLoading] = useState(false);
 	const [jadwal, setJadwal] = useState({});
 	const [error, setError] = useState({ status: false, message: null });
+	const [fieldError, setFieldError] = useState({
+		hari: { status: false, message: null },
+		jam: { status: false, message: null },
+		bank: { status: false, message: null },
+		general: { status: false, message: null },
+	});
 
+	const jam = ['08.00-09.00', '11.00-12.00', '15.00-16.00'];
 	const total = parseInt(data.tarif) + 6500;
+
 	const handleChangeDay = async (e) => {
 		const hari = e.target.value;
 		const tempat = 'Sekitar Universitas Brawijaya';
 		setJadwal({ hari, tempat });
 	};
+
+	const handleChangeJam = async (e) => {
+		const jam = e.target.value;
+		setJadwal((jadwal) => ({ ...jadwal, jam }));
+	};
+
 	const handleChangeBank = async (event) => {
 		setBank(event.target.value);
 	};
 
-	const createTransaction = async () => {
-		if (bank === '') {
-			setError((error) => ({
-				status: true,
-				message: 'Choose the payment method',
-			}));
-		}
+	const postPayment = async () => {
 		const params = {
 			payment_type: 'bank_transfer',
 			bank_transfer: {
@@ -73,27 +81,81 @@ export default function TransactionModal({
 		};
 		try {
 			setLoading(true);
-			setError((error) => ({ status: false, message: null }));
-			localStorage.setItem('va-timeout', JSON.stringify(params.dosenId));
 			const datas = await konsulAPI.post('/api/payment', params);
-			console.log(datas);
-			if (bank === 'mandiri')
-				setPaymentData({
-					va: datas.data.data.responseMidtrans.permata_va_number,
-					orderId: datas.data.data.responseMidtrans.order_id,
-				});
-			else
-				setPaymentData({
-					va: datas.data.data.responseMidtrans.va_numbers[0].va_number,
-					orderId: datas.data.data.responseMidtrans.order_id,
-				});
-			setLoading(false);
+			if (datas.data.success) {
+				localStorage.setItem('va-timeout', JSON.stringify(params.dosenId));
+				if (bank === 'mandiri')
+					setPaymentData({
+						va: datas.data.data.responseMidtrans.permata_va_number,
+						orderId: datas.data.data.responseMidtrans.order_id,
+					});
+				else
+					setPaymentData({
+						va: datas.data.data.responseMidtrans.va_numbers[0].va_number,
+						orderId: datas.data.data.responseMidtrans.order_id,
+					});
+				setLoading(false);
+			}
 		} catch (error) {
 			console.log(error);
-			setError((error) => ({
-				status: true,
-				message: 'Transaction failed',
+			setFieldError((fieldError) => ({
+				...fieldError,
+				general: {
+					status: true,
+					message: 'Transaction failed due to network error',
+				},
 			}));
+			setLoading(false);
+		}
+	};
+
+	const createTransaction = async () => {
+		//intial re value state
+		setFieldError((fieldError) => ({
+			hari: { status: false, message: null },
+			jam: { status: false, message: null },
+			bank: { status: false, message: null },
+			general: { status: false, message: null },
+		}));
+
+		// cek statusnya
+		if (status === 'chat') {
+			//check banknya kosong apa ngga
+			if (bank === '') {
+				setFieldError((fieldError) => ({
+					...fieldError,
+					bank: { status: true, message: 'Choose payment method' },
+				}));
+				return;
+			}
+
+			postPayment();
+		} else {
+			//check banknya kosong apa ngga
+			if (bank === '') {
+				setFieldError((fieldError) => ({
+					...fieldError,
+					bank: { status: true, message: 'Choose payment method' },
+				}));
+			} else if (!jadwal.hasOwnProperty('hari')) {
+				setFieldError((fieldError) => ({
+					...fieldError,
+					hari: {
+						status: true,
+						message: 'Choose the day for the meet up schedule',
+					},
+				}));
+			} else if (!jadwal.hasOwnProperty('jam')) {
+				setFieldError((fieldError) => ({
+					...fieldError,
+					jam: {
+						status: true,
+						message: 'Choose the time for the meet up schedule',
+					},
+				}));
+			} else {
+				postPayment();
+			}
 		}
 	};
 	return (
@@ -108,7 +170,9 @@ export default function TransactionModal({
 						<div className="flex flex-col space-y-4">
 							<div className="">
 								<h1 className="font-semibold text-2xl text-orange-primary">
-									Pembayaran Chat
+									{status === 'janji'
+										? 'Pembayaran Janji Temu'
+										: 'Pembayaran Chat'}
 								</h1>
 							</div>
 							<div className="flex justify-start items-center space-x-4 shadow-md p-3 rounded-md">
@@ -145,16 +209,15 @@ export default function TransactionModal({
 						{status === 'janji' && (
 							<>
 								<div className="flex-col mt-4 space-y-2 p-2 shadow-md rounded-md">
-									<p className="my-2">Jadwal Konsultasi</p>
+									<p className="my-2">Hari Konsultasi</p>
 									<FormControl
 										fullWidth
 										disabled={
 											loading || paymentData.hasOwnProperty('va') ? true : false
 										}>
 										<Select
-											labelId="demo-simple-select-label"
-											id="demo-simple-select"
 											value={jadwal.hari}
+											error={fieldError.hari.status ? true : false}
 											onChange={handleChangeDay}
 											sx={{ width: '100%' }}>
 											<MenuItem value="senin">Senin</MenuItem>
@@ -162,9 +225,43 @@ export default function TransactionModal({
 											<MenuItem value="rabu">Rabu</MenuItem>
 										</Select>
 									</FormControl>
+									<p className="my-2 text-red-500">
+										{fieldError.hari.status ? fieldError.hari.message : ''}
+									</p>
 								</div>
 
 								{jadwal.hasOwnProperty('tempat') && (
+									<>
+										<div className="flex-col mt-4 space-y-2 p-2 shadow-md rounded-md">
+											<p className="my-2">Jam Konsultasi</p>
+											<FormControl
+												fullWidth
+												disabled={
+													loading || paymentData.hasOwnProperty('va')
+														? true
+														: false
+												}>
+												<Select
+													value={jadwal.jam}
+													error={fieldError.jam.status ? true : false}
+													onChange={handleChangeJam}
+													sx={{ width: '100%' }}>
+													{jam.map((jam, idx) => (
+														<MenuItem value={jam} key={idx}>
+															{jam}
+														</MenuItem>
+													))}
+												</Select>
+											</FormControl>
+
+											<p className="my-2 text-red-500">
+												{fieldError.jam.status ? fieldError.jam.message : ''}
+											</p>
+										</div>
+									</>
+								)}
+
+								{jadwal.hasOwnProperty('jam') && (
 									<>
 										<div className="mt-5">
 											<div className="shadow-md p-3 rounded-md">
@@ -187,16 +284,18 @@ export default function TransactionModal({
 									loading || paymentData.hasOwnProperty('va') ? true : false
 								}>
 								<Select
-									labelId="demo-simple-select-label"
-									id="demo-simple-select"
 									value={bank}
 									onChange={handleChangeBank}
+									error={fieldError.bank.status ? true : false}
 									sx={{ width: '100%' }}>
 									<MenuItem value="mandiri">Mandiri</MenuItem>
 									<MenuItem value="bca">BCA</MenuItem>
 									<MenuItem value="bni">BNI</MenuItem>
 								</Select>
 							</FormControl>
+							<p className="my-2 text-red-500">
+								{fieldError.bank.status ? fieldError.bank.message : ''}
+							</p>
 						</div>
 
 						{paymentData.hasOwnProperty('va') && (
@@ -213,7 +312,7 @@ export default function TransactionModal({
 									</div>
 								</div>
 								{localStorage.getItem('va-timeout') && (
-									<div className="mt-5 shadow-md p-3 rounded-md">
+									<div className="mt-5 shadow-md p-3 rounded-md flex justify-center">
 										<CountingDown renderer={timer} />
 									</div>
 								)}

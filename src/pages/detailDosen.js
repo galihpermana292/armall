@@ -38,6 +38,9 @@ const DetailDosen = () => {
 	const handleClose = () => {
 		setOpen(false);
 		setStatus(null);
+		//reload when close after payment
+		if (JSON.parse(localStorage.getItem('va-timeout')))
+			window.location.reload();
 	};
 	const [detailDosen, setDetailDosen] = useState([]);
 	const {
@@ -54,6 +57,7 @@ const DetailDosen = () => {
 		ulasan = [],
 		image,
 	} = detailDosen;
+	console.log(lokasiJadwal);
 	const [error, setError] = useState({ status: false, message: null });
 	const [vaTimeout, setVaTimeout] = useState(false);
 
@@ -82,21 +86,23 @@ const DetailDosen = () => {
 			setVaTimeout(false);
 			if (JSON.parse(localStorage.getItem('va-timeout')) === id) {
 				return (
-					<div className='border-[1px] border-orange-primary rounded-md p-2'>
-						Selesaikan transaksi pembayaran anda dengan dosen ini dalam{' '}
-						<span className="text-orange-primary font-bold">
+					<div className="border-[1px] border-orange-primary rounded-md p-2 max-w-[280px]">
+						<p>Selesaikan transaksi pembayaran anda dengan dosen ini dalam </p>
+						<div className="text-orange-primary font-bold text-center w-full">
 							{hours} : {minutes} : {seconds}
-						</span>
+						</div>
 					</div>
 				);
 			} else {
 				return (
-					<div>
-						Kamu sedang memiliki transaksi pending yang menunggu di bayar.
-						Selesaikan dalam{' '}
-						<span className="text-orange-primary font-bold">
+					<div className="border-[1px] border-red-500 rounded-md p-2 max-w-[280px]">
+						<p>
+							Kamu memiliki transaksi pending yang harus segera dibayar, bayar
+							dalam
+						</p>
+						<div className="text-red-500 font-bold text-center w-full">
 							{hours} : {minutes} : {seconds}
-						</span>
+						</div>
 					</div>
 				);
 			}

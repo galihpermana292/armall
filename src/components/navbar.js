@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,6 +16,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { pages } from '../utils/constant';
 import logo from '../images/logo.png';
 import { useAuth } from '../utils/auth';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import Popper from '@mui/material/Popper';
+import DosenCard from './dosenCard';
+import { konsulAPI } from '../utils/api';
 
 export const PrimaryButton = styled(Button).attrs(() => ({}))`
 	color: ${(props) => (props.secondary ? '#ff9f1c' : '#fff')};
@@ -32,11 +36,14 @@ export const PrimaryButton = styled(Button).attrs(() => ({}))`
 const settings = ['Profile', 'Logout'];
 
 const Navbar = () => {
-	const { setAndGetTokens, authToken } = useAuth();
+	const { setAndGetTokens, authToken, user } = useAuth();
 	const { pathname } = useLocation();
 	const login = false;
+	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [anchorElNav, setAnchorElNav] = useState(null);
 	const [anchorElUser, setAnchorElUser] = useState(null);
+
+	const [allTransactions, setAllTransactions] = useState([]);
 
 	const handleOpenNavMenu = (event) => {
 		setAnchorElNav(event.currentTarget);
@@ -49,7 +56,6 @@ const Navbar = () => {
 		setAnchorElNav(null);
 	};
 
-
 	const handleCloseUserMenu = (setting) => {
 		setAnchorElUser(null);
 		if (setting === 'Logout') {
@@ -57,6 +63,25 @@ const Navbar = () => {
 			localStorage.clear();
 		}
 	};
+
+	const fetchHistory = async () => {
+		const data = await konsulAPI.get(`/api/payment/history/${user}`);
+		setAllTransactions(data.data.data);
+
+	};
+
+	const handleClick = (event) => {
+		setAnchorEl(anchorEl ? null : event.currentTarget);
+	};
+
+	const open = Boolean(anchorEl);
+	const id = open ? 'simple-popper' : undefined;
+
+	useEffect(() => {
+		fetchHistory();
+    console.log('pppppp')
+	}, []);
+
 	return (
 		<>
 			<AppBar position="sticky" sx={{ color: '#000', background: 'white' }}>
@@ -143,7 +168,68 @@ const Navbar = () => {
 								</Link>
 							))}
 						</Box>
-
+						{authToken && (
+							<div className="mr-5 md:mr-10 cursor-pointer hover:opacity-40">
+								<ReceiptIcon
+									sx={{ color: 'gray' }}
+									fontSize="large"
+									onClick={handleClick}
+								/>
+								<Popper id={id} open={open} anchorEl={anchorEl}>
+									<div className="shadow-lg bg-white mt-10 min-h-profile-bg min-w-[300px] mr-4 p-5 max-h-[70vh] overflow-y-auto">
+										<p className="font-semibold mb-2 text-orange-primary text-lg">
+											Transactions History
+										</p>
+										{allTransactions.length === 0 && (
+											<div className="flex justify-center min-h-profile-bg items-center">
+												<h1 className="font-semibold text-orange-primary text-lg">
+													Belum ada transaksi
+												</h1>
+											</div>
+										)}
+										<div className="space-y-5">
+											{allTransactions.length > 0 &&
+												allTransactions.map((order) => {
+													return (
+														<div
+															className="p-3 shadow-md rounded-md bg-white z-10"
+															key={order.createdAt}>
+															<div className="flex space-x-4 mb-5 w-full">
+																<div>
+																	<img
+																		src={`${process.env.PUBLIC_URL}/images/${order.dosenId.image}`}
+																		alt="dosen"
+																		width="60px"
+																	/>
+																</div>
+																<div className="w-full space-y-2">
+																	<h1 className="">
+																		{order.dosenId.namaLengkap}
+																	</h1>
+																	<div className="flex items-center justify-between">
+																		<p className="font-semibold">
+																			IDR {order.responseMidtrans.gross_amount}
+																		</p>
+																		<div className="bg-yellow-100 text-orange-primary text-sm font-semibold max-w-max py-1 px-2 rounded-md">
+																			{
+																				order.responseMidtrans
+																					.transaction_status
+																			}
+																		</div>
+																	</div>
+																	<p className="max-w-[200px] bg-tosca-secondary text-tosca-primary text-sm py-1 px-2 rounded-md">
+																		{order.responseMidtrans.order_id}
+																	</p>
+																</div>
+															</div>
+														</div>
+													);
+												})}
+										</div>
+									</div>
+								</Popper>
+							</div>
+						)}
 						{authToken ? (
 							<Box sx={{ flexGrow: 0 }}>
 								<Tooltip title="Open settings">
@@ -154,6 +240,7 @@ const Navbar = () => {
 										/>
 									</IconButton>
 								</Tooltip>
+
 								<Menu
 									sx={{ mt: '45px' }}
 									id="menu-appbar"
