@@ -11,6 +11,7 @@ import Select from '@mui/material/Select';
 import { konsulAPI } from '../utils/api';
 import { v4 as uuidv4 } from 'uuid';
 import { PrimaryButton } from './navbar';
+import CountingDown from '../components/countDown';
 
 const style = {
 	position: 'absolute',
@@ -23,7 +24,7 @@ const style = {
 	borderRadius: '.5rem',
 	boxShadow: 24,
 	p: 4,
-	maxHeight: '90vh',
+	maxHeight: '70vh',
 	overflowY: 'auto',
 };
 
@@ -32,6 +33,7 @@ export default function TransactionModal({
 	handleClose,
 	status,
 	data = {},
+	timer,
 }) {
 	const userId = JSON.parse(localStorage.getItem('id'));
 	const [bank, setBank] = useState('');
@@ -72,6 +74,7 @@ export default function TransactionModal({
 		try {
 			setLoading(true);
 			setError((error) => ({ status: false, message: null }));
+			localStorage.setItem('va-timeout', JSON.stringify(params.dosenId));
 			const datas = await konsulAPI.post('/api/payment', params);
 			console.log(datas);
 			if (bank === 'mandiri')
@@ -209,6 +212,11 @@ export default function TransactionModal({
 										</p>
 									</div>
 								</div>
+								{localStorage.getItem('va-timeout') && (
+									<div className="mt-5 shadow-md p-3 rounded-md">
+										<CountingDown renderer={timer} />
+									</div>
+								)}
 								<div className="mt-5">
 									<PrimaryButton
 										full={'true'}

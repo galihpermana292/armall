@@ -49,6 +49,7 @@ const Navbar = () => {
 		setAnchorElNav(null);
 	};
 
+
 	const handleCloseUserMenu = (setting) => {
 		setAnchorElUser(null);
 		if (setting === 'Logout') {

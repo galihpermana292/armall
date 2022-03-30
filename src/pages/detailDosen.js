@@ -11,6 +11,12 @@ import testi from '../images/testi.png';
 import { konsulAPI } from '../utils/api';
 import CircularProgress from '@mui/material/CircularProgress';
 import TransactionModal from '../components/transactionsModal';
+import CountingDown from '../components/countDown';
+
+// Random component
+const Completionist = () => <span>You are good to go!</span>;
+
+// Renderer callback with condition
 
 const DUMMY = {
 	namaLengkap: 'Joko Apriatna, S.Kom, M.kom',
@@ -49,6 +55,8 @@ const DetailDosen = () => {
 		image,
 	} = detailDosen;
 	const [error, setError] = useState({ status: false, message: null });
+	const [vaTimeout, setVaTimeout] = useState(false);
+
 	const fetchDosen = async () => {
 		try {
 			setError((error) => ({ status: false, message: null }));
@@ -63,9 +71,41 @@ const DetailDosen = () => {
 		}
 	};
 
+	const renderer = ({ hours, minutes, seconds, completed }) => {
+		if (completed) {
+			setVaTimeout(true);
+			localStorage.removeItem('va-timeout');
+			// Render a complete state
+			return <span>selesai</span>;
+		} else {
+			// Render a countdown
+			setVaTimeout(false);
+			if (JSON.parse(localStorage.getItem('va-timeout')) === id) {
+				return (
+					<div className='border-[1px] border-orange-primary rounded-md p-2'>
+						Selesaikan transaksi pembayaran anda dengan dosen ini dalam{' '}
+						<span className="text-orange-primary font-bold">
+							{hours} : {minutes} : {seconds}
+						</span>
+					</div>
+				);
+			} else {
+				return (
+					<div>
+						Kamu sedang memiliki transaksi pending yang menunggu di bayar.
+						Selesaikan dalam{' '}
+						<span className="text-orange-primary font-bold">
+							{hours} : {minutes} : {seconds}
+						</span>
+					</div>
+				);
+			}
+		}
+	};
+
 	useEffect(() => {
 		fetchDosen();
-	}, []);
+	}, [, vaTimeout]);
 
 	return (
 		<Container maxWidth={'xl'}>
@@ -130,17 +170,24 @@ const DetailDosen = () => {
 										Rp {tarif}/jam
 									</h1>
 									<div className="flex items-center space-x-2">
-										<PrimaryButton
-											full={'true'}
-											onClick={() => handleOpen('janji')}>
-											buat janji
-										</PrimaryButton>
-										<PrimaryButton
-											full={'true'}
-											secondary={'true'}
-											onClick={() => handleOpen('chat')}>
-											kirim pesan
-										</PrimaryButton>
+										{}
+										{vaTimeout || !localStorage.getItem('va-timeout') ? (
+											<>
+												<PrimaryButton
+													full={'true'}
+													onClick={() => handleOpen('janji')}>
+													buat janji
+												</PrimaryButton>
+												<PrimaryButton
+													full={'true'}
+													secondary={'true'}
+													onClick={() => handleOpen('chat')}>
+													kirim pesan
+												</PrimaryButton>
+											</>
+										) : (
+											<CountingDown renderer={renderer} />
+										)}
 									</div>
 								</div>
 							</div>
@@ -250,6 +297,7 @@ const DetailDosen = () => {
 						handleClose={handleClose}
 						status={status}
 						data={{ id, namaLengkap, universitas, fakultas, tarif, image }}
+						timer={renderer}
 					/>
 				</div>
 			)}
