@@ -83,15 +83,18 @@ export default function TransactionModal({
 			},
 			dosenId: data.id,
 			userId: userId,
+			type: status,
+			hari: status === 'chat' ? '' : jadwal.hari,
+			jam: status === 'chat' ? '' : jadwal.jam,
+			lokasi: status === 'chat' ? '' : jadwal.tempat,
 		};
 		try {
 			setLoading(true);
 			let datas = await konsulAPI.post('/api/payment', params);
 			let parseDatas = JSON.parse(datas.data.data.responseMidtrans);
-			console.log(datas.data.data._id);
 			if (datas.data.success) {
 				localStorage.setItem('va-timeout', JSON.stringify(params.dosenId));
-				const orderId = datas.data.data._id
+				const orderId = datas.data.data._id;
 				localStorage.setItem('order-id', JSON.stringify(orderId));
 				if (bank === 'mandiri')
 					setPaymentData({

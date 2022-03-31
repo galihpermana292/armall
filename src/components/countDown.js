@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 
 // Random component
 
-
 const getLocalStorageValue = (s) => localStorage.getItem(s);
 
 export default function CountingDown({ renderer }) {
 	const [data, setData] = useState(
-		{ date: Date.now(), delay: 60000 } //10 seconds
+		{ date: Date.now(), delay: 80000 } //10 seconds
 	);
 	const wantedDelay = 60000; //10 ms
 

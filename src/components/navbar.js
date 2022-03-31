@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styled from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { pages } from '../utils/constant';
 import logo from '../images/logo.png';
 import { useAuth } from '../utils/auth';
@@ -23,6 +23,8 @@ import Snackbar from '@mui/material/Snackbar';
 import { konsulAPI } from '../utils/api';
 import CountingDown from './countDown';
 import MuiAlert from '@mui/material/Alert';
+import useSWR from 'swr';
+import axios from 'axios';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
 	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -40,7 +42,7 @@ export const PrimaryButton = styled(Button).attrs(() => ({}))`
 	}
 `;
 
-const settings = ['Profile', 'Logout'];
+const settings = ['Chat', 'Logout'];
 
 const Navbar = () => {
 	const { setAndGetTokens, authToken, user } = useAuth();
@@ -50,8 +52,21 @@ const Navbar = () => {
 	const [anchorElUser, setAnchorElUser] = useState(null);
 	const { renderer, vaTimeout } = useAuth();
 	const [openNotif, setOpenNotif] = useState(false);
+	let navigate = useNavigate();
 
-	const [allTransactions, setAllTransactions] = useState([]);
+	const fetcher = (url) => {
+		if (!JSON.parse(localStorage.getItem('end_date'))) deletePaymentById();
+		return axios.get(url).then((res) => {
+			return res.data.data;
+		});
+	};
+	const { data = [], error } = useSWR(
+		`https://konsultasi-api.herokuapp.com/api/payment/history/${user}`,
+		fetcher,
+		{ refreshInterval: 100 }
+	);
+
+	const [allTransactions, setAllTransactions] = useState(data);
 
 	const handleOpenNavMenu = (event) => {
 		setAnchorElNav(event.currentTarget);
@@ -71,32 +86,46 @@ const Navbar = () => {
 			localStorage.clear();
 			window.location.reload();
 		}
+
+		if (setting === 'Chat') {
+			navigate('/chat', { replace: true });
+		}
 	};
 
 	const fetchHistory = async () => {
 		if (!JSON.parse(localStorage.getItem('end_date'))) deletePaymentById();
 
 		const data = await konsulAPI.get(`/api/payment/history/${user}`);
+
 		setAllTransactions(data.data.data);
-		// console.log(data.data.data);
 	};
 
 	const deletePaymentById = async () => {
 		const orderId = JSON.parse(localStorage.getItem('order-id'));
-		if (orderId) {
-			// console.log('deleting...');
-			setOpenNotif(true);
-			const res = await konsulAPI.delete(`/api/payment/${orderId}`);
-
-			if (res.data.success) {
-				setTimeout(() => {
-					window.location.reload();
-				}, 3000);
-				localStorage.removeItem('order-id');
-			}
-			// console.log(res, 'deleting pending transactions');
-		} else {
+		let dataS = data.filter(
+			(data) =>
+				data.id === orderId &&
+				data.responseMidtrans.transaction_status === 'settlement'
+		);
+		if (dataS.length > 0) {
+			localStorage.removeItem('order-id');
+			localStorage.removeItem('end_date');
+			localStorage.removeItem('va-timeout');
 			return;
+		} else {
+			if (orderId !== null) {
+				setOpenNotif(true);
+				const res = await konsulAPI.delete(`/api/payment/${orderId}`);
+
+				if (res.data.success) {
+					setTimeout(() => {
+						window.location.reload();
+					}, 3000);
+					localStorage.removeItem('order-id');
+				}
+			} else {
+				return;
+			}
 		}
 	};
 
@@ -108,10 +137,6 @@ const Navbar = () => {
 	const open = Boolean(anchorEl);
 	const id = open ? 'simple-popper' : undefined;
 
-	useEffect(() => {
-		// deletePaymentById();
-		fetchHistory();
-	}, [, vaTimeout]);
 
 	return (
 		<>
@@ -216,7 +241,7 @@ const Navbar = () => {
 										<p className="font-semibold mb-2 text-orange-primary text-lg">
 											Transactions History
 										</p>
-										{allTransactions.length === 0 && (
+										{data.length === 0 && (
 											<div className="flex justify-center min-h-profile-bg items-center">
 												<h1 className="font-semibold text-orange-primary text-lg">
 													Belum ada transaksi
@@ -224,8 +249,8 @@ const Navbar = () => {
 											</div>
 										)}
 										<div className="space-y-5">
-											{allTransactions.length > 0 &&
-												allTransactions.map((order) => {
+											{data.length > 0 &&
+												data.map((order) => {
 													return (
 														<div
 															className="p-3 shadow-md rounded-md bg-white z-10"
@@ -263,11 +288,13 @@ const Navbar = () => {
 																			: order.responseMidtrans
 																					.permata_va_number}
 																	</p>
-																	{localStorage.getItem('va-timeout') && (
-																		<div className="">
-																			<CountingDown renderer={renderer} />
-																		</div>
-																	)}
+																	{localStorage.getItem('va-timeout') &&
+																		order.responseMidtrans
+																			.transaction_status === 'pending' && (
+																			<div className="">
+																				<CountingDown renderer={renderer} />
+																			</div>
+																		)}
 																</div>
 															</div>
 														</div>

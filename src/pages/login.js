@@ -38,7 +38,6 @@ const Login = () => {
 					setAndGetTokens(token, id);
 					navigate('/', { replace: true });
 					setLoading(false);
-					// console.log(loginResponse, token, 'tokenton');
 				}
 			} catch (error) {
 				setLoading(false);
@@ -53,7 +52,6 @@ const Login = () => {
 						message: 'Network Error!',
 					}));
 				}
-				// dispatch({ type: 'SETERROR' });
 				console.dir(error, 'in login');
 			}
 		}

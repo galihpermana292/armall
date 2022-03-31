@@ -10,6 +10,7 @@ import { AuthContext } from './utils/auth';
 import DetailDosen from './pages/detailDosen';
 import { PrivateRoute, RestrictedRoute } from './utils/privateRoute';
 import ScrollToTop from './components/scrollToTop';
+import Chat from './pages/chat';
 
 function App() {
 	const isAnyToken = JSON.parse(localStorage.getItem('token'));
@@ -101,6 +102,15 @@ function App() {
 					element={
 						<PrivateRoute>
 							<DetailDosen />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					exact
+					path={'/chat'}
+					element={
+						<PrivateRoute>
+							<Chat />
 						</PrivateRoute>
 					}
 				/>

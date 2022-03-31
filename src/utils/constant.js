@@ -6,6 +6,7 @@ import testi from '../images/testi.png';
 import quote from '../images/quote.png';
 import Landing from '../pages/landing';
 import CariDosen from '../pages/cariDosen';
+import Bantuan from '../pages/bantuan';
 export const WHY_US = [
 	{
 		image: akses,
@@ -70,6 +71,38 @@ export const pages = [
 	{
 		name: 'Bantuan',
 		route: '/bantuan',
-		Component: () => <CariDosen />,
+		Component: () => <Bantuan />,
+	},
+];
+
+export const FAQ = [
+	{
+		q: 'Apakah saya perlu login terlebih dahulu untuk melakukan konsultasi?',
+		a: 'Ya, Anda perlu login terlebih dahulu sebelum berkonsultasi dengan dosen Anda',
+		id: 1,
+	},
+
+	{
+		q: 'Apakah saya bisa membatalkan konsultasi?',
+		a: 'Anda dapat membatalkan konsultasi melalui fitur riwayat di halaman profile',
+		id: 2,
+	},
+
+	{
+		q: 'Apakah jika saya membatalkan konsultasi, dana akan dikembalikan?',
+		a: 'Ya, dana akan dikembalikan sepenuhnya melalui metode pembayaran yang Anda pilih',
+		id: 3,
+	},
+
+	{
+		q: 'Bagaimana saya bisa menambah atau mengubah jadwal konsultasi?',
+		a: 'Dosen dapat menambah atau mengubah jadwal konsultasi melalui fitur edit profile di halaman profile',
+		id: 4,
+	},
+
+	{
+		q: 'Metode apa saja yang dapat saya pakai untuk berkonsultasi?',
+		a: 'Anda dapat berkonsultasi secara tatap muka, atau via chat ',
+		id: 5,
 	},
 ];

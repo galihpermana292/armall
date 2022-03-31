@@ -42,8 +42,8 @@ const DetailDosen = () => {
 		setOpen(false);
 		setStatus(null);
 		//reload when close after payment
-		if (JSON.parse(localStorage.getItem('va-timeout')))
-		window.location.reload();
+		// if (JSON.parse(localStorage.getItem('va-timeout')))
+		// window.location.reload();
 	};
 	const [detailDosen, setDetailDosen] = useState([]);
 	const {
