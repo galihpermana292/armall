@@ -48,12 +48,17 @@ export default function TransactionModal({
 		general: { status: false, message: null },
 	});
 
-	const jam = ['08.00-09.00', '11.00-12.00', '15.00-16.00'];
+	const [jam, setJam] = useState([]);
 	const total = parseInt(data.tarif) + 6500;
 
 	const handleChangeDay = async (e) => {
 		const hari = e.target.value;
-		const tempat = 'Sekitar Universitas Brawijaya';
+		let choosen = {};
+		data.lokasiJadwal.filter((jad) => {
+			if (jad.hari === hari) choosen = jad;
+		});
+		const tempat = choosen.lokasi;
+		setJam([choosen.jam]);
 		setJadwal({ hari, tempat });
 	};
 
@@ -81,18 +86,22 @@ export default function TransactionModal({
 		};
 		try {
 			setLoading(true);
-			const datas = await konsulAPI.post('/api/payment', params);
+			let datas = await konsulAPI.post('/api/payment', params);
+			let parseDatas = JSON.parse(datas.data.data.responseMidtrans);
+			console.log(datas.data.data._id);
 			if (datas.data.success) {
 				localStorage.setItem('va-timeout', JSON.stringify(params.dosenId));
+				const orderId = datas.data.data._id
+				localStorage.setItem('order-id', JSON.stringify(orderId));
 				if (bank === 'mandiri')
 					setPaymentData({
-						va: datas.data.data.responseMidtrans.permata_va_number,
-						orderId: datas.data.data.responseMidtrans.order_id,
+						va: parseDatas.permata_va_number,
+						orderId: parseDatas.order_id,
 					});
 				else
 					setPaymentData({
-						va: datas.data.data.responseMidtrans.va_numbers[0].va_number,
-						orderId: datas.data.data.responseMidtrans.order_id,
+						va: parseDatas.va_numbers[0].va_number,
+						orderId: parseDatas.order_id,
 					});
 				setLoading(false);
 			}
@@ -216,13 +225,17 @@ export default function TransactionModal({
 											loading || paymentData.hasOwnProperty('va') ? true : false
 										}>
 										<Select
-											value={jadwal.hari}
+											value={
+												data.lokasiJadwal.length > 0 ? jadwal.hari : 'all day'
+											}
 											error={fieldError.hari.status ? true : false}
 											onChange={handleChangeDay}
 											sx={{ width: '100%' }}>
-											<MenuItem value="senin">Senin</MenuItem>
-											<MenuItem value="selasa">Selasa</MenuItem>
-											<MenuItem value="rabu">Rabu</MenuItem>
+											{data.lokasiJadwal.map((jadwal, idx) => (
+												<MenuItem value={jadwal.hari} key={idx}>
+													{jadwal.hari}
+												</MenuItem>
+											))}
 										</Select>
 									</FormControl>
 									<p className="my-2 text-red-500">
@@ -242,15 +255,16 @@ export default function TransactionModal({
 														: false
 												}>
 												<Select
-													value={jadwal.jam}
+													// value={jadwal.jam}
 													error={fieldError.jam.status ? true : false}
 													onChange={handleChangeJam}
 													sx={{ width: '100%' }}>
-													{jam.map((jam, idx) => (
-														<MenuItem value={jam} key={idx}>
-															{jam}
-														</MenuItem>
-													))}
+													{jam.length > 0 &&
+														jam.map((jam, idx) => (
+															<MenuItem value={jam} key={idx}>
+																{jam}
+															</MenuItem>
+														))}
 												</Select>
 											</FormControl>
 

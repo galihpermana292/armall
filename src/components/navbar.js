@@ -19,7 +19,14 @@ import { useAuth } from '../utils/auth';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import Popper from '@mui/material/Popper';
 import DosenCard from './dosenCard';
+import Snackbar from '@mui/material/Snackbar';
 import { konsulAPI } from '../utils/api';
+import CountingDown from './countDown';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export const PrimaryButton = styled(Button).attrs(() => ({}))`
 	color: ${(props) => (props.secondary ? '#ff9f1c' : '#fff')};
@@ -38,10 +45,11 @@ const settings = ['Profile', 'Logout'];
 const Navbar = () => {
 	const { setAndGetTokens, authToken, user } = useAuth();
 	const { pathname } = useLocation();
-	const login = false;
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [anchorElNav, setAnchorElNav] = useState(null);
 	const [anchorElUser, setAnchorElUser] = useState(null);
+	const { renderer, vaTimeout } = useAuth();
+	const [openNotif, setOpenNotif] = useState(false);
 
 	const [allTransactions, setAllTransactions] = useState([]);
 
@@ -61,16 +69,39 @@ const Navbar = () => {
 		if (setting === 'Logout') {
 			setAndGetTokens();
 			localStorage.clear();
+			window.location.reload();
 		}
 	};
 
 	const fetchHistory = async () => {
+		if (!JSON.parse(localStorage.getItem('end_date'))) deletePaymentById();
+
 		const data = await konsulAPI.get(`/api/payment/history/${user}`);
 		setAllTransactions(data.data.data);
+		// console.log(data.data.data);
+	};
 
+	const deletePaymentById = async () => {
+		const orderId = JSON.parse(localStorage.getItem('order-id'));
+		if (orderId) {
+			// console.log('deleting...');
+			setOpenNotif(true);
+			const res = await konsulAPI.delete(`/api/payment/${orderId}`);
+
+			if (res.data.success) {
+				setTimeout(() => {
+					window.location.reload();
+				}, 3000);
+				localStorage.removeItem('order-id');
+			}
+			// console.log(res, 'deleting pending transactions');
+		} else {
+			return;
+		}
 	};
 
 	const handleClick = (event) => {
+		localStorage.setItem('popover', JSON.stringify(anchorEl ? false : true));
 		setAnchorEl(anchorEl ? null : event.currentTarget);
 	};
 
@@ -78,14 +109,19 @@ const Navbar = () => {
 	const id = open ? 'simple-popper' : undefined;
 
 	useEffect(() => {
+		// deletePaymentById();
 		fetchHistory();
-    console.log('pppppp')
-	}, []);
+	}, [, vaTimeout]);
 
 	return (
 		<>
 			<AppBar position="sticky" sx={{ color: '#000', background: 'white' }}>
 				<Container maxWidth="xl">
+					<Snackbar open={openNotif} autoHideDuration={3000}>
+						<Alert severity="warning" sx={{ width: '100%' }}>
+							Your pending transaction has been deleted
+						</Alert>
+					</Snackbar>
 					<Toolbar disableGutters>
 						<Typography
 							variant="h6"
@@ -176,7 +212,7 @@ const Navbar = () => {
 									onClick={handleClick}
 								/>
 								<Popper id={id} open={open} anchorEl={anchorEl}>
-									<div className="shadow-lg bg-white mt-10 min-h-profile-bg min-w-[300px] mr-4 p-5 max-h-[70vh] overflow-y-auto">
+									<div className="shadow-lg bg-white mt-5 min-h-profile-bg min-w-[300px] mr-4 p-5 max-h-[70vh] overflow-y-auto">
 										<p className="font-semibold mb-2 text-orange-primary text-lg">
 											Transactions History
 										</p>
@@ -217,9 +253,21 @@ const Navbar = () => {
 																			}
 																		</div>
 																	</div>
-																	<p className="max-w-[200px] bg-tosca-secondary text-tosca-primary text-sm py-1 px-2 rounded-md">
-																		{order.responseMidtrans.order_id}
+																	<p className="max-w-max text-md bg-tosca-secondary text-tosca-primary py-1 px-2 rounded-md">
+																		VA:{' '}
+																		{order.responseMidtrans.hasOwnProperty(
+																			'va_numbers'
+																		)
+																			? order.responseMidtrans.va_numbers[0]
+																					.va_number
+																			: order.responseMidtrans
+																					.permata_va_number}
 																	</p>
+																	{localStorage.getItem('va-timeout') && (
+																		<div className="">
+																			<CountingDown renderer={renderer} />
+																		</div>
+																	)}
 																</div>
 															</div>
 														</div>

@@ -12,6 +12,7 @@ import { konsulAPI } from '../utils/api';
 import CircularProgress from '@mui/material/CircularProgress';
 import TransactionModal from '../components/transactionsModal';
 import CountingDown from '../components/countDown';
+import { useAuth } from '../utils/auth';
 
 // Random component
 const Completionist = () => <span>You are good to go!</span>;
@@ -35,12 +36,14 @@ const DetailDosen = () => {
 		setOpen(true);
 		setStatus(from);
 	};
+
+	const { renderer } = useAuth();
 	const handleClose = () => {
 		setOpen(false);
 		setStatus(null);
 		//reload when close after payment
 		if (JSON.parse(localStorage.getItem('va-timeout')))
-			window.location.reload();
+		window.location.reload();
 	};
 	const [detailDosen, setDetailDosen] = useState([]);
 	const {
@@ -57,9 +60,7 @@ const DetailDosen = () => {
 		ulasan = [],
 		image,
 	} = detailDosen;
-	console.log(lokasiJadwal);
 	const [error, setError] = useState({ status: false, message: null });
-	const [vaTimeout, setVaTimeout] = useState(false);
 
 	const fetchDosen = async () => {
 		try {
@@ -75,43 +76,9 @@ const DetailDosen = () => {
 		}
 	};
 
-	const renderer = ({ hours, minutes, seconds, completed }) => {
-		if (completed) {
-			setVaTimeout(true);
-			localStorage.removeItem('va-timeout');
-			// Render a complete state
-			return <span>selesai</span>;
-		} else {
-			// Render a countdown
-			setVaTimeout(false);
-			if (JSON.parse(localStorage.getItem('va-timeout')) === id) {
-				return (
-					<div className="border-[1px] border-orange-primary rounded-md p-2 max-w-[280px]">
-						<p>Selesaikan transaksi pembayaran anda dengan dosen ini dalam </p>
-						<div className="text-orange-primary font-bold text-center w-full">
-							{hours} : {minutes} : {seconds}
-						</div>
-					</div>
-				);
-			} else {
-				return (
-					<div className="border-[1px] border-red-500 rounded-md p-2 max-w-[280px]">
-						<p>
-							Kamu memiliki transaksi pending yang harus segera dibayar, bayar
-							dalam
-						</p>
-						<div className="text-red-500 font-bold text-center w-full">
-							{hours} : {minutes} : {seconds}
-						</div>
-					</div>
-				);
-			}
-		}
-	};
-
 	useEffect(() => {
 		fetchDosen();
-	}, [, vaTimeout]);
+	}, []);
 
 	return (
 		<Container maxWidth={'xl'}>
@@ -176,8 +143,7 @@ const DetailDosen = () => {
 										Rp {tarif}/jam
 									</h1>
 									<div className="flex items-center space-x-2">
-										{}
-										{vaTimeout || !localStorage.getItem('va-timeout') ? (
+										{!localStorage.getItem('va-timeout') ? (
 											<>
 												<PrimaryButton
 													full={'true'}
@@ -230,14 +196,14 @@ const DetailDosen = () => {
 								Lokasi dan Jadwal Konsultasi
 							</h1>
 							<div className="space-y-5">
-								{[1, 2, 3].map((idx) => {
+								{lokasiJadwal.map((jadwal, idx) => {
 									return (
 										<div className="p-3 border-2 rounded-md" key={idx}>
 											<div className="flex flex-col w-full ">
-												<h1 className="font-bold">Senin</h1>
+												<h1 className="font-bold">{jadwal.hari}</h1>
 												<div className="flex items-center justify-between w-full">
-													<p>Sekitar Universitas Brawijaya</p>
-													<p>09.00 - 12.00</p>
+													<p>{jadwal.lokasi}</p>
+													<p>{jadwal.jam}</p>
 												</div>
 											</div>
 										</div>
@@ -302,7 +268,15 @@ const DetailDosen = () => {
 						open={open}
 						handleClose={handleClose}
 						status={status}
-						data={{ id, namaLengkap, universitas, fakultas, tarif, image }}
+						data={{
+							id,
+							namaLengkap,
+							universitas,
+							fakultas,
+							tarif,
+							image,
+							lokasiJadwal,
+						}}
 						timer={renderer}
 					/>
 				</div>
